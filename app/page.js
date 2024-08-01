@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import axios from 'axios';
 
 export default function Home() {
   const [file1, setFile1] = useState(null);
@@ -9,19 +8,29 @@ export default function Home() {
   const [result, setResult] = useState(null);
 
   const handleFileUpload = async () => {
+    if (!file1 || !file2) {
+      console.error('No se seleccionaron ambos archivos');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('file1', file1);
     formData.append('file2', file2);
 
     try {
-      const response = await axios.post('/api/analyze/route.js', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        body: formData,
       });
-      setResult(response.data);
+
+      if (response.ok) {
+        const data = await response.json();
+        setResult(data.data1);  // Asegúrate de que el formato de los datos coincida con la respuesta
+      } else {
+        console.error('Error al procesar los archivos');
+      }
     } catch (error) {
-      console.error(error);
+      console.error('Error en la solicitud:', error);
     }
   };
 
@@ -31,7 +40,7 @@ export default function Home() {
         <h1 className="text-white text-center text-2xl font-bold">Excel Automation Bot</h1>
       </header>
       <main className="flex flex-col items-center mt-8 w-full max-w-2xl">
-        <div className="w-full bg-white p-6 rounded-lg shadow-md">
+        <div className="w-[90vw] bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-4">Upload Excel Files</h2>
           <input
             type="file"
@@ -53,16 +62,42 @@ export default function Home() {
           </button>
         </div>
         {result && (
-          <div className="mt-8 bg-white p-6 rounded-lg shadow-md w-full">
+          <div className="mt-8 bg-white p-6 rounded-lg shadow-md w-[90vw] overflow-auto ">
             <h2 className="text-xl font-semibold mb-4">Results</h2>
-            {/* Renderiza los resultados aquí */}
-            <pre>{JSON.stringify(result, null, 2)}</pre>
-            <a
-              href="/api/download"
-              className="mt-4 inline-block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Download Result
-            </a>
+            <table className="w-[100%] bg-white border">
+              <thead>
+                <tr>
+                  <th className="py-2 px-4 border-b">ID</th>
+                  <th className="py-2 px-4 border-b">2025</th>
+                  <th className="py-2 px-4 border-b">Statut</th>
+                  <th className="py-2 px-4 border-b">Nom</th>
+                  <th className="py-2 px-4 border-b">Interlocuteur commercial</th>
+                  <th className="py-2 px-4 border-b">Email</th>
+                  <th className="py-2 px-4 border-b">Pige</th>
+                  <th className="py-2 px-4 border-b">C.P.</th>
+                  <th className="py-2 px-4 border-b">Ville</th>
+                  <th className="py-2 px-4 border-b">Secteur d'activité</th>
+                  <th className="py-2 px-4 border-b">Impayé</th>
+                </tr>
+              </thead>  
+              <tbody>
+                {result.map((row, index) => (
+                  <tr key={index} className={`${(index + 1) % 2 == 0 ? "bg-slate-300": "bg-white" }`}>
+                    <td className="py-2 px-4 border-b">{index + 1}</td>
+                    <td className="py-2 px-4 border-b">{row["2025"]}</td>
+                    <td className="py-2 px-4 border-b">{row.Statut}</td>
+                    <td className="py-2 px-4 border-b">{row.Nom}</td>
+                    <td className="py-2 px-4 border-b">{row["Interlocuteur commercial"]}</td>
+                    <td className="py-2 px-4 border-b">{row["email interlocuteur"]}</td>
+                    <td className="py-2 px-4 border-b">{row.Pige}</td>
+                    <td className="py-2 px-4 border-b">{row["C.P."]}</td>
+                    <td className="py-2 px-4 border-b">{row.Ville}</td>
+                    <td className="py-2 px-4 border-b">{row["Secteur d'activité"]}</td>
+                    <td className="py-2 px-4 border-b">{row.Impayé}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </main>
