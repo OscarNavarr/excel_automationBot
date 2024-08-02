@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import * as XLSX from 'xlsx';
 
 export default function Home() {
   const [file1, setFile1] = useState(null);
@@ -35,6 +36,13 @@ export default function Home() {
     }
   };
 
+  const handleExportTable = () => {
+    const worksheet = XLSX.utils.json_to_sheet(result);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Results');
+    XLSX.writeFile(workbook, 'resultados.xlsx');
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center">
       <header className="bg-blue-600 w-full py-4">
@@ -64,7 +72,10 @@ export default function Home() {
         </div>
         {result && (
           <div className="mt-8 bg-white p-6 rounded-lg shadow-md w-[90vw] overflow-auto ">
-            <h2 className="text-xl font-semibold mb-4">Results</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold mb-4">Results</h2>
+              <button onClick={handleExportTable} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Export Data</button>
+            </div>
             <table className="w-[100%] bg-white border">
               <thead>
                 <tr>

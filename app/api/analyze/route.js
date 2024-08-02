@@ -60,6 +60,39 @@ function compareSheets(sheet1, sheet2) {
     }
   }
 
+  // Obtener todos los valores que estan en sheet1 pero que no estan en result
+  for(let i = 0; i < sheet1.length; i++) {
+    let found = false;
+    for(let j = 0; j < result.length; j++) {
+      if(sheet1[i].Nom.toLowerCase().trim() === result[j].Nom.toLowerCase().trim()) {
+        found = true;
+        break;
+      }
+    }
+
+    if(!found) {
+      result.push({
+        "Statut": sheet1[i].Statut,
+        "Nom": sheet1[i].Nom,
+        "Pays": sheet1[i].Pays,
+        "Langue": sheet1[i].Langue,
+        "Interlocuteur commercial": sheet1[i]["Interlocuteur commercial"],
+        "email interlocuteur": sheet1[i]["email interlocuteur"],
+        "Téléphone": sheet1[i]["Téléphone"],
+        "Télécopie": sheet1[i]["Télécopie"],
+        "email": sheet1[i].email,
+        "Pige": sheet1[i].Pige,
+        "C.P.": sheet1[i]["C.P."],
+        "Ville": sheet1[i].Ville,
+        "Secteur d'activité": sheet1[i]["Secteur d'activité"],
+        "Informations": sheet1[i].Informations,
+        "Impayé": sheet1[i].Impayé,
+        "2025": sheet1[i]["2025"]
+      });
+    }
+  }
+
+
   return { result, nom_client_that_are_not_in_sheet1 };
 }
 
