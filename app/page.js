@@ -25,7 +25,8 @@ export default function Home() {
 
       if (response.ok) {
         const data = await response.json();
-        setResult(data.data1);  // Asegúrate de que el formato de los datos coincida con la respuesta
+        setResult(data.differences);  // Asegúrate de que el formato de los datos coincida con la respuesta
+        console.log('Datos:', data);
       } else {
         console.error('Error al procesar los archivos');
       }
@@ -68,32 +69,44 @@ export default function Home() {
               <thead>
                 <tr>
                   <th className="py-2 px-4 border-b">ID</th>
-                  <th className="py-2 px-4 border-b">2025</th>
                   <th className="py-2 px-4 border-b">Statut</th>
                   <th className="py-2 px-4 border-b">Nom</th>
+                  <th className="py-2 px-4 border-b">Pays</th>
+                  <th className="py-2 px-4 border-b">Langue</th>
                   <th className="py-2 px-4 border-b">Interlocuteur commercial</th>
-                  <th className="py-2 px-4 border-b">Email</th>
+                  <th className="py-2 px-4 border-b">email interlocuteur</th>
+                  <th className="py-2 px-4 border-b">Téléphone</th>
+                  <th className="py-2 px-4 border-b">Télécopie</th>
+                  <th className="py-2 px-4 border-b">email</th>
                   <th className="py-2 px-4 border-b">Pige</th>
                   <th className="py-2 px-4 border-b">C.P.</th>
                   <th className="py-2 px-4 border-b">Ville</th>
                   <th className="py-2 px-4 border-b">Secteur d'activité</th>
+                  <th className="py-2 px-4 border-b">Informations</th>
                   <th className="py-2 px-4 border-b">Impayé</th>
+                  <th className="py-2 px-4 border-b">2025</th>
                 </tr>
               </thead>  
               <tbody>
                 {result.map((row, index) => (
                   <tr key={index} className={`${(index + 1) % 2 == 0 ? "bg-slate-300": "bg-white" }`}>
                     <td className="py-2 px-4 border-b">{index + 1}</td>
-                    <td className="py-2 px-4 border-b">{row["2025"]}</td>
                     <td className="py-2 px-4 border-b">{row.Statut}</td>
                     <td className="py-2 px-4 border-b">{row.Nom}</td>
+                    <td className="py-2 px-4 border-b">{row.Pays}</td>
+                    <td className="py-2 px-4 border-b">{row.Langue}</td>
                     <td className="py-2 px-4 border-b">{row["Interlocuteur commercial"]}</td>
                     <td className="py-2 px-4 border-b">{row["email interlocuteur"]}</td>
+                    <td className="py-2 px-4 border-b">{row["Téléphone"]}</td>
+                    <td className="py-2 px-4 border-b">{row["Télécopie"]}</td>
+                    <td className="py-2 px-4 border-b">{row.email}</td>
                     <td className="py-2 px-4 border-b">{row.Pige}</td>
                     <td className="py-2 px-4 border-b">{row["C.P."]}</td>
                     <td className="py-2 px-4 border-b">{row.Ville}</td>
                     <td className="py-2 px-4 border-b">{row["Secteur d'activité"]}</td>
+                    <td className="py-2 px-4 border-b">{row.Informations}</td>
                     <td className="py-2 px-4 border-b">{row.Impayé}</td>
+                    <td className="py-2 px-4 border-b">{row["2025"]}</td>
                   </tr>
                 ))}
               </tbody>
