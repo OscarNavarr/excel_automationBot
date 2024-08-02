@@ -11,7 +11,7 @@ function compareSheets(sheet1, sheet2) {
   for (let i = 0; i < sheet2.length; i++) {
     let found = false; // Bandera para verificar si se encontró en sheet1
     for (let j = 0; j < sheet1.length; j++) {
-      if (sheet2[i].nom.toLowerCase().trim() === sheet1[j].Nom.toLowerCase().trim()) {
+      if (sheet2[i].nom.toLowerCase().trim() === sheet1[j].Nom.toLowerCase().trim() && !foundNames.has(sheet2[i].nom.toLowerCase().trim())) {
         result.push({
           "Statut": sheet1[j].Statut,
           "Nom": sheet1[j].Nom,

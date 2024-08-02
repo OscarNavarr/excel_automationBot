@@ -71,12 +71,12 @@ export default function Home() {
           </button>
         </div>
         {result && (
-          <div className="mt-8 bg-white p-6 rounded-lg shadow-md w-[90vw] overflow-auto ">
+          <div className="mt-8 bg-white p-6 rounded-lg shadow-md w-[90vw] overflow-auto  max-h-[50rem] ">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold mb-4">Results</h2>
               <button onClick={handleExportTable} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Export Data</button>
             </div>
-            <table className="w-[100%] bg-white border">
+            <table className="max-w-[85vw] bg-white border ">
               <thead>
                 <tr>
                   <th className="py-2 px-4 border-b">ID</th>
