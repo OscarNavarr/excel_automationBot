@@ -40,7 +40,7 @@ export default function Home() {
     const worksheet = XLSX.utils.json_to_sheet(result);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Results');
-    XLSX.writeFile(workbook, 'resultados.xlsx');
+    XLSX.writeFile(workbook, 'result.xlsx');
   };
 
   return (

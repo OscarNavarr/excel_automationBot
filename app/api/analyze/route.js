@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { read, utils } from 'xlsx';
 
+// Función que convierte el texto a minúsculas, elimina los espacios en blanco al inicio y al final y elimina los acentos en las letras (', `, ", ~,^,¨, etc.)
+const normalizeText = (text) => text.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
 function compareSheets(sheet1, sheet2) {
   const result = [];
   const nom_client_that_are_not_in_sheet1 = [];
@@ -10,8 +13,12 @@ function compareSheets(sheet1, sheet2) {
 
   for (let i = 0; i < sheet2.length; i++) {
     let found = false; // Bandera para verificar si se encontró en sheet1
+    const normalizedNom2 = normalizeText(sheet2[i].nom);
+
     for (let j = 0; j < sheet1.length; j++) {
-      if (sheet2[i].nom.toLowerCase().trim() === sheet1[j].Nom.toLowerCase().trim() && !foundNames.has(sheet2[i].nom.toLowerCase().trim())) {
+      const normalizedNom1 = normalizeText(sheet1[j].Nom);
+
+      if (normalizedNom2 === normalizedNom1 && !foundNames.has(normalizedNom2)) {
         result.push({
           "Statut": sheet1[j].Statut,
           "Nom": sheet1[j].Nom,
@@ -31,13 +38,13 @@ function compareSheets(sheet1, sheet2) {
           "2025": sheet1[j]["2025"]
         });
         found = true; // Marca como encontrado
-        foundNames.add(sheet2[i].nom.toLowerCase().trim()); // Agregar a los nombres encontrados
+        foundNames.add(normalizedNom2); // Agregar a los nombres encontrados
         break;
       }
     }
 
     // Si no se encontró en sheet1, agregarlo a los resultados y a la lista de nombres no encontrados
-    if (!found && !foundNames.has(sheet2[i].nom.toLowerCase().trim())) {
+    if (!found && !foundNames.has(normalizedNom2)) {
       result.push({
         "Statut": "-",
         "Nom": sheet2[i].nom,
@@ -57,20 +64,14 @@ function compareSheets(sheet1, sheet2) {
         "2025": "-"
       });
       nom_client_that_are_not_in_sheet1.push(sheet2[i].nom);
+      foundNames.add(normalizedNom2); // Asegúrate de agregar el nombre encontrado para evitar duplicados
     }
   }
 
   // Obtener todos los valores que estan en sheet1 pero que no estan en result
-  for(let i = 0; i < sheet1.length; i++) {
-    let found = false;
-    for(let j = 0; j < result.length; j++) {
-      if(sheet1[i].Nom.toLowerCase().trim() === result[j].Nom.toLowerCase().trim()) {
-        found = true;
-        break;
-      }
-    }
-
-    if(!found) {
+  /* for (let i = 0; i < sheet1.length; i++) {
+    const normalizedNom1 = normalizeText(sheet1[i].Nom);
+    if (!foundNames.has(normalizedNom1)) {
       result.push({
         "Statut": sheet1[i].Statut,
         "Nom": sheet1[i].Nom,
@@ -89,9 +90,9 @@ function compareSheets(sheet1, sheet2) {
         "Impayé": sheet1[i].Impayé,
         "2025": sheet1[i]["2025"]
       });
+      foundNames.add(normalizedNom1); // Agregar el nombre encontrado para evitar duplicados
     }
-  }
-
+  } */
 
   return { result, nom_client_that_are_not_in_sheet1 };
 }
