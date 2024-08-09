@@ -27,7 +27,7 @@ export default function Home() {
       if (response.ok) {
         const data = await response.json();
         setResult(data.updatedSheet1);  
-        console.log('Datos actualizados:', data.updatedSheet1);
+        console.log('Datos actualizados:', data);
       } else {
         console.error('Error al procesar los archivos');
       }

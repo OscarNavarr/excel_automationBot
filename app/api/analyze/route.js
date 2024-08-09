@@ -1,15 +1,23 @@
 import { NextResponse } from 'next/server';
 import { read, utils } from 'xlsx';
 
-// This function normalizes text by converting it to lowercase, remove special characters and trailing whitespaces,
+// Function that converts text to lowercase, removes leading and trailing whitespace, and removes accents on letters
 const normalizeText = (text) => text.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+// This function deletes all rows in `sheet2` where the `creationDate` column is less than 2024
+function filterRowsByCreationDate(sheet2) {
+
+  const cutoffTimestamp = new Date('2024-01-01').getTime() / 1000; // Usar timestamp en segundos para el 1 de enero de 2024
+  return sheet2.filter(row => row.creationDate >= cutoffTimestamp);
+
+}
 
 // This function updates and cleans `sheet1` based on `sheet2`
 function updateAndCleanSheet1(sheet1, sheet2) {
   const normalizedSheet1Map = new Map();
   const result = [];
 
-  // Create a map of normalized `Nom` values from `sheet1`
+  // Create a map of normalized values ​​of `Nom` from `sheet1`
   for (let i = 0; i < sheet1.length; i++) {
     const normalizedNom1 = normalizeText(sheet1[i].Nom);
     normalizedSheet1Map.set(normalizedNom1, i);
@@ -21,6 +29,7 @@ function updateAndCleanSheet1(sheet1, sheet2) {
     const indexInSheet1 = normalizedSheet1Map.get(normalizedNom2);
 
     if (indexInSheet1 !== undefined) {
+
       // If exists in `sheet1`, update the row
       sheet1[indexInSheet1] = {
         ...sheet1[indexInSheet1],
@@ -88,12 +97,21 @@ export async function POST(request) {
     const workbook2 = read(buffer2, { type: 'buffer' });
 
     const sheet1 = utils.sheet_to_json(workbook1.Sheets[workbook1.SheetNames[0]]);
-    const sheet2 = utils.sheet_to_json(workbook2.Sheets[workbook2.SheetNames[0]]);
+    const sheet2Original = utils.sheet_to_json(workbook2.Sheets[workbook2.SheetNames[0]]);
 
-    // Update and clean `sheet1` based on `sheet2`
-    const updatedSheet1 = updateAndCleanSheet1(sheet1, sheet2);
+    // Filter rows from `sheet2` by creation date
+    const sheet2Filtered = filterRowsByCreationDate(sheet2Original);
+    
+    // Get lengths for comparison
+    const sheet2OriginalLength = sheet2Original.length;
+    const sheet2FilteredLength = sheet2Filtered.length;
 
-    return NextResponse.json({ updatedSheet1 });
+    // Update and clean `sheet1` based on `sheet2Filtered`
+    const updatedSheet1 = updateAndCleanSheet1(sheet1, sheet2Filtered);
+
+
+    // Return the updated `sheet1` and the lengths of `sheet2Original` and `sheet2Filtered`
+    return NextResponse.json({ updatedSheet1, sheet2OriginalLength, sheet2FilteredLength });
 
   } catch (error) {
     return NextResponse.json({ error: 'Error al procesar los archivos', details: error.message }, { status: 500 });
