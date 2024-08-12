@@ -111,7 +111,7 @@ export async function POST(request) {
 
 
     // Return the updated `sheet1` and the lengths of `sheet2Original` and `sheet2Filtered`
-    return NextResponse.json({ updatedSheet1, sheet2OriginalLength, sheet2FilteredLength });
+    return NextResponse.json({ updatedSheet1, sheet2OriginalLength, sheet2Filtered });
 
   } catch (error) {
     return NextResponse.json({ error: 'Error al procesar los archivos', details: error.message }, { status: 500 });
